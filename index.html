@@ -441,9 +441,31 @@ const qtyEl=document.getElementById('cyberQty');
 for(let i=1;i<=999;i++){const o=document.createElement('option');o.value=i;o.textContent=i;qtyEl.appendChild(o)}
 function goPayment(e){
   e.preventDefault();
+  const form=e.target;
+  const name=form.querySelector('input[type="text"]').value;
+  const email=form.querySelector('input[type="email"]').value;
+  const phone=form.querySelector('input[type="tel"]').value;
+  const persons=form.querySelector('input[type="number"]').value;
+  const location=form.querySelectorAll('input[type="text"]')[1].value;
+  const date=form.querySelector('input[type="date"]').value;
+  const time=form.querySelector('input[type="time"]').value;
   const eventType=document.getElementById('eventType').value||'Meet & Greet';
+  const article=eventType.match(/^[aeiouAEIOU]/)?'an':'a';
   const sub=encodeURIComponent('Payment Request — '+eventType+' | Private Globals');
-  const body=encodeURIComponent('Hello Private Globals,\n\nI would like to make a payment for a '+eventType+'.\n\nPlease send me payment instructions.\n\nThank you.');
+  const body=encodeURIComponent(
+    'Hello Private Globals,\n\n'+
+    'I would like to make a payment for '+article+' '+eventType+'. Please send me payment instructions.\n\n'+
+    '— Booking Details —\n'+
+    'Full Name: '+name+'\n'+
+    'Email Address: '+email+'\n'+
+    'Phone Number: '+phone+'\n'+
+    'Number of Persons: '+persons+'\n'+
+    'Meeting Location: '+location+'\n'+
+    'Preferred Date: '+date+'\n'+
+    'Preferred Time: '+time+'\n'+
+    'Event Type: '+eventType+'\n\n'+
+    'Thank you.'
+  );
   window.open('mailto:Privateglobalagency@gmail.com?subject='+sub+'&body='+body, '_blank');
 }
 </script>
