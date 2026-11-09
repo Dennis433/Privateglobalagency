@@ -368,6 +368,7 @@ footer{background:var(--smoke);border-top:1px solid var(--line);padding:72px 80p
         <div class="fg"><label>Preferred Date</label><input type="date" required/></div>
       </div>
       <div class="fg"><label>Preferred Time</label><input type="time" required/></div>
+      <div class="fg"><label>Event Type</label><select id="eventType" required><option value="" disabled selected>Select event type</option><option value="Upcoming Show">Upcoming Show</option><option value="Meet &amp; Greet">Meet &amp; Greet</option></select></div>
       <div style="margin-top:8px"><button type="submit" class="btn-gold">Proceed to Payment</button></div>
     </form>
   </div>
@@ -440,8 +441,9 @@ const qtyEl=document.getElementById('cyberQty');
 for(let i=1;i<=999;i++){const o=document.createElement('option');o.value=i;o.textContent=i;qtyEl.appendChild(o)}
 function goPayment(e){
   e.preventDefault();
-  const sub=encodeURIComponent('Payment Request — Meet & Greet | Private Globals');
-  const body=encodeURIComponent('Hello Private Globals,\n\nI would like to make a payment for a Meet & Greet.\n\nPlease send me payment instructions.\n\nThank you.');
+  const eventType=document.getElementById('eventType').value||'Meet & Greet';
+  const sub=encodeURIComponent('Payment Request — '+eventType+' | Private Globals');
+  const body=encodeURIComponent('Hello Private Globals,\n\nI would like to make a payment for a '+eventType+'.\n\nPlease send me payment instructions.\n\nThank you.');
   window.open('mailto:Privateglobalagency@gmail.com?subject='+sub+'&body='+body, '_blank');
 }
 </script>
