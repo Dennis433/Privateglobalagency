@@ -365,6 +365,10 @@ footer{background:var(--smoke);border-top:1px solid var(--line);padding:72px 80p
       </div>
       <div class="form-row">
         <div class="fg"><label>Meeting Location</label><input type="text" placeholder="City or Venue" required/></div>
+        <div class="fg" style="border:2px solid var(--gold);border-radius:10px;padding:14px 16px;background:rgba(212,175,55,0.07);">
+          <label style="color:var(--gold);font-size:1.05rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;">⭐ Celebrity Name</label>
+          <input id="celebrityName" type="text" placeholder="Enter the name of the celebrity" required style="margin-top:6px;"/>
+        </div>
         <div class="fg"><label>Preferred Date</label><input type="date" required/></div>
       </div>
       <div class="fg"><label>Preferred Time</label><input type="time" required/></div>
@@ -449,6 +453,7 @@ function goPayment(e){
   const location=form.querySelectorAll('input[type="text"]')[1].value;
   const date=form.querySelector('input[type="date"]').value;
   const time=form.querySelector('input[type="time"]').value;
+  const celebrity=document.getElementById('celebrityName').value;
   const eventType=document.getElementById('eventType').value||'Meet & Greet';
   const article=eventType.match(/^[aeiouAEIOU]/)?'an':'a';
   const sub=encodeURIComponent('Payment Request — '+eventType+' | Private Globals');
@@ -461,6 +466,7 @@ function goPayment(e){
     'Phone Number: '+phone+'\n'+
     'Number of Persons: '+persons+'\n'+
     'Meeting Location: '+location+'\n'+
+    'Celebrity Name: '+celebrity+'\n'+
     'Preferred Date: '+date+'\n'+
     'Preferred Time: '+time+'\n'+
     'Event Type: '+eventType+'\n\n'+
