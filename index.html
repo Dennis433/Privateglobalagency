@@ -331,7 +331,25 @@ footer{background:var(--smoke);border-top:1px solid var(--line);padding:72px 80p
         <div class="tier-dur">Valid for 1 Year</div>
       </div>
     </div>
-    <div class="center-btn"><a href="mailto:Privateglobalagency@gmail.com?subject=Get%20Your%20Card" class="btn-gold">Get Your Card</a></div>
+    <div class="cyber-qty" style="margin:0 0 20px">
+      <label>Card Type</label>
+      <select id="cardType">
+        <option value="" disabled selected>Select card type</option>
+        <option value="Regular|1462">Regular &mdash; $1,462</option>
+        <option value="VIP|2031">VIP &mdash; $2,031</option>
+        <option value="VVIP|2750">VVIP &mdash; $2,750</option>
+      </select>
+    </div>
+    <div class="cyber-qty" style="margin:0 0 32px">
+      <label>Quantity</label>
+      <select id="cardQty"><option value="" disabled selected>Select quantity</option></select>
+    </div>
+    <div id="cardTotal" style="text-align:center;margin:0 0 28px;color:var(--plat2);font-size:0.95rem;line-height:1.8">
+      <div>Total</div>
+      <div id="cardTotalAmt" style="font-family:'Playfair Display',serif;font-size:2rem;font-weight:700;color:var(--gold)">$0</div>
+      <div id="cardTotalNote" style="color:var(--muted);font-size:0.8rem">Select a card type and quantity</div>
+    </div>
+    <div class="center-btn"><button type="button" class="btn-gold" style="border:none;cursor:pointer;font-family:inherit" onclick="requestCardPayment()">Get Your Card</button></div>
   </div>
 </div>
 
@@ -473,6 +491,43 @@ function goPayment(e){
     'Thank you.'
   );
   window.open('mailto:Privateglobalagency@gmail.com?subject='+sub+'&body='+body, '_blank');
+}
+const cardQtyEl=document.getElementById('cardQty');
+for(let i=1;i<=999;i++){const o=document.createElement('option');o.value=i;o.textContent=i;cardQtyEl.appendChild(o)}
+function getCardOrder(){
+  const typeVal=document.getElementById('cardType').value;
+  const qtyVal=document.getElementById('cardQty').value;
+  if(!typeVal||!qtyVal) return null;
+  const [type,price]=typeVal.split('|');
+  const qty=parseInt(qtyVal,10);
+  const unit=parseInt(price,10);
+  return {type:type,unit:unit,qty:qty,total:unit*qty};
+}
+function updateCardTotal(){
+  const o=getCardOrder();
+  const amt=document.getElementById('cardTotalAmt');
+  const note=document.getElementById('cardTotalNote');
+  if(!o){amt.textContent='$0';note.textContent='Select a card type and quantity';return}
+  amt.textContent='$'+o.total.toLocaleString('en-US');
+  note.textContent=o.qty+' × '+o.type+' card'+(o.qty>1?'s':'')+' at $'+o.unit.toLocaleString('en-US')+' each';
+}
+document.getElementById('cardType').addEventListener('change',updateCardTotal);
+document.getElementById('cardQty').addEventListener('change',updateCardTotal);
+function requestCardPayment(){
+  const o=getCardOrder();
+  if(!o){alert('Please select a card type and quantity.');return}
+  const sub='Payment Instructions — '+o.qty+' x '+o.type+' Card | Private Globals';
+  const body=
+    'Hello Private Globals,\n\n'+
+    'I would like to purchase '+o.qty+' '+o.type+' membership card'+(o.qty>1?'s':'')+'.\n\n'+
+    '— Order Details —\n'+
+    'Card Type: '+o.type+'\n'+
+    'Price per Card: $'+o.unit.toLocaleString('en-US')+'\n'+
+    'Quantity: '+o.qty+'\n'+
+    'Total: $'+o.total.toLocaleString('en-US')+'\n\n'+
+    'Please send me payment instructions.\n\n'+
+    'Thank you.';
+  window.open('https://mail.google.com/mail/?view=cm&fs=1&to=Privateglobalagency@gmail.com&su='+encodeURIComponent(sub)+'&body='+encodeURIComponent(body),'_blank');
 }
 </script>
 </body>
