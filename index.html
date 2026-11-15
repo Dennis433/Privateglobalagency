@@ -379,7 +379,7 @@ footer{background:var(--smoke);border-top:1px solid var(--line);padding:72px 80p
       </div>
       <div class="form-row">
         <div class="fg"><label>Phone Number</label><input type="tel" placeholder="+1 000 000 0000" required/></div>
-        <div class="fg"><label>Number of Persons</label><input type="number" min="1" placeholder="1" required/></div>
+        <div class="fg"><label>Number of Persons</label><input id="meetPersons" type="number" min="1" placeholder="1" required/></div>
       </div>
       <div class="form-row">
         <div class="fg"><label>Meeting Location</label><input type="text" placeholder="City or Venue" required/></div>
@@ -391,6 +391,12 @@ footer{background:var(--smoke);border-top:1px solid var(--line);padding:72px 80p
       </div>
       <div class="fg"><label>Preferred Time</label><input type="time" required/></div>
       <div class="fg"><label>Event Type</label><select id="eventType" required><option value="" disabled selected>Select event type</option><option value="Upcoming Show">Upcoming Show</option><option value="Meet &amp; Greet">Meet &amp; Greet</option></select></div>
+      <div class="fg"><label>Ticket Tier</label><select id="meetTier" required><option value="" disabled selected>Select tier</option><option value="Regular|3350">Regular &mdash; $3,350 per person</option><option value="VIP|4800">VIP &mdash; $4,800 per person</option><option value="VVIP|6500">VVIP &mdash; $6,500 per person</option></select></div>
+      <div id="meetTotal" style="text-align:center;margin:24px 0 28px;color:var(--plat2);font-size:0.95rem;line-height:1.8">
+        <div>Total</div>
+        <div id="meetTotalAmt" style="font-family:'Playfair Display',serif;font-size:2rem;font-weight:700;color:var(--gold)">$0</div>
+        <div id="meetTotalNote" style="color:var(--muted);font-size:0.8rem">Select a tier and number of persons</div>
+      </div>
       <div style="margin-top:8px"><button type="submit" class="btn-gold">Proceed to Payment</button></div>
     </form>
   </div>
@@ -461,6 +467,24 @@ function changeSlide(d){goSlide((cur+d+dots.length)%dots.length)}
 setInterval(()=>changeSlide(1),5500);
 const qtyEl=document.getElementById('cyberQty');
 for(let i=1;i<=999;i++){const o=document.createElement('option');o.value=i;o.textContent=i;qtyEl.appendChild(o)}
+function getMeetOrder(){
+  const tierVal=document.getElementById('meetTier').value;
+  const persons=parseInt(document.getElementById('meetPersons').value,10);
+  if(!tierVal||!persons||persons<1) return null;
+  const [tier,price]=tierVal.split('|');
+  const unit=parseInt(price,10);
+  return {tier:tier,unit:unit,persons:persons,total:unit*persons};
+}
+function updateMeetTotal(){
+  const o=getMeetOrder();
+  const amt=document.getElementById('meetTotalAmt');
+  const note=document.getElementById('meetTotalNote');
+  if(!o){amt.textContent='$0';note.textContent='Select a tier and number of persons';return}
+  amt.textContent='$'+o.total.toLocaleString('en-US');
+  note.textContent=o.persons+' person'+(o.persons>1?'s':'')+' × '+o.tier+' at $'+o.unit.toLocaleString('en-US')+' each';
+}
+document.getElementById('meetTier').addEventListener('change',updateMeetTotal);
+document.getElementById('meetPersons').addEventListener('input',updateMeetTotal);
 function goPayment(e){
   e.preventDefault();
   const form=e.target;
@@ -487,10 +511,13 @@ function goPayment(e){
     'Celebrity Name: '+celebrity+'\n'+
     'Preferred Date: '+date+'\n'+
     'Preferred Time: '+time+'\n'+
-    'Event Type: '+eventType+'\n\n'+
+    'Event Type: '+eventType+'\n'+
+    'Ticket Tier: '+(getMeetOrder()?getMeetOrder().tier:'Not selected')+'\n'+
+    'Price per Person: $'+(getMeetOrder()?getMeetOrder().unit.toLocaleString('en-US'):'-')+'\n'+
+    'Total: $'+(getMeetOrder()?getMeetOrder().total.toLocaleString('en-US'):'-')+'\n\n'+
     'Thank you.'
   );
-  window.open('mailto:Privateglobalagency@gmail.com?subject='+sub+'&body='+body, '_blank');
+  window.location.href='mailto:Privateglobalagency@gmail.com?subject='+sub+'&body='+body;
 }
 const cardQtyEl=document.getElementById('cardQty');
 for(let i=1;i<=999;i++){const o=document.createElement('option');o.value=i;o.textContent=i;cardQtyEl.appendChild(o)}
@@ -527,7 +554,7 @@ function requestCardPayment(){
     'Total: $'+o.total.toLocaleString('en-US')+'\n\n'+
     'Please send me payment instructions.\n\n'+
     'Thank you.';
-  window.open('https://mail.google.com/mail/?view=cm&fs=1&to=Privateglobalagency@gmail.com&su='+encodeURIComponent(sub)+'&body='+encodeURIComponent(body),'_blank');
+  window.location.href='mailto:Privateglobalagency@gmail.com?subject='+encodeURIComponent(sub)+'&body='+encodeURIComponent(body);
 }
 </script>
 </body>
